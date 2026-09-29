@@ -61,9 +61,9 @@ print(f"Average:  {average:.1f}")    # :.1f means "round to 1 decimal place"
 print()
 print("---- BEAT RANKING (most open cases first) ----")
 # sorted(per_beat) alone would sort by the KEYS (beat names).
-# key=per_beat.get tells it to sort by the VALUES (the counts) instead.
+# key=lambda b: per_beat[b] tells it to sort by the VALUES (the counts) instead.
 # reverse=True flips it so the biggest count comes first.
-for beat in sorted(per_beat, key=per_beat.get, reverse=True):
+for beat in sorted(per_beat, key=lambda b: per_beat[b], reverse=True):
     count = per_beat[beat]           # look up how many open cases this beat has
     bar = "#" * count                # repeat "#" that many times to make a mini bar chart
     print(f"{beat:<10}{count:>3}  {bar}")   # beat left-aligned, count right-aligned, then the bar
