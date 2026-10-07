@@ -1,6 +1,8 @@
 import csv
+import os
 
-DATA_FILE = "wk06_data_raw_cases_100.csv"
+# find the CSV in the same folder as this file, no matter where you run it from
+DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wk06_data_raw_cases_100.csv")
 
 
 def parse_row(row):
