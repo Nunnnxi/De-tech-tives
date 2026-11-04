@@ -44,3 +44,26 @@ python3 -m venv .venv
 - The Washington Post, Unsolved Homicide Database, github.com/washingtonpost/data-homicides, 2018 (license CC BY-NC-SA 4.0).
 
 See `reports/SOURCES.md` for details.
+
+## Week 10: The Picture
+
+### Rebuild (after `src.get_data` and `src.series`)
+
+```
+.venv/bin/python -m src.charts           # reports/clearance_trend.png (+ _rolling.png)
+.venv/bin/python -m src.casemap          # reports/dallas_map.html (+ dallas_map_age.html, area table)
+.venv/bin/python -m src.map_screenshot   # optional: reports/dallas_map.png (needs Chrome + internet)
+.venv/bin/python -m pytest
+```
+
+### What each artifact shows
+
+- **`reports/clearance_trend.png`** (for a newsroom): Dallas Police Department homicide clearance rate for every year 1965-2025, on a 0-100% axis. 2017's jump and 2018's record low are annotated, and 2025 is marked as a partial year. Any missing year would show as a break in the line.
+- **`reports/dallas_map.html`** (for a council office): every Washington Post Dallas homicide 2007-2017 as one dot. Orange = open / no arrest; green = closed. The legend gives the counts. The dots have no popups or tooltips.
+
+![Dallas homicide map](reports/dallas_map.png)
+
+### Definitions
+
+- **Chart** uses the FBI "cleared" count: arrest **or** exceptional clearance (MAP / FBI UCR).
+- **Map** uses Washington Post dispositions: "Open/No arrest" (orange) vs "Closed by arrest" + "Closed without arrest" (both green).
