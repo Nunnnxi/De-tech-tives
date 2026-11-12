@@ -2,7 +2,7 @@
 
 ITSS 3312 squad repo.
 
-- `src/` - package code (`intake.py`, `models.py`, `patterns.py`)
+- `src/` - package code, one `python -m src.<module>` script per step (see each week below)
 - `tests/` - pytest tests, run `pytest` from the repo root
 - `data/` - raw inputs
 - `reports/` - outputs (CSVs, charts, maps)
@@ -67,3 +67,35 @@ See `reports/SOURCES.md` for details.
 
 - **Chart** uses the FBI "cleared" count: arrest **or** exceptional clearance (MAP / FBI UCR).
 - **Map** uses Washington Post dispositions: "Open/No arrest" (orange) vs "Closed by arrest" + "Closed without arrest" (both green).
+
+## Week 11: The Tap (live city data)
+
+### Setup (each detective, once)
+
+Get a free app token at dallasopendata.com (My Profile > Edit Profile > Developer Settings > Create New App Token) and put it in `.env` at the repo root. `.env` is gitignored; never commit it.
+
+```
+DALLAS_APP_TOKEN=paste_your_token_here
+```
+
+### Rebuild
+
+```
+.venv/bin/python -m src.fetch_city   # API -> data/raw_incidents.json (cache) -> data/case.db
+.venv/bin/python -m src.queries      # three answers + reports/dallas_city_vs_fbi.csv
+.venv/bin/python -m pytest
+```
+
+`fetch_city` only calls the API when `data/raw_incidents.json` is missing. Delete that file to re-fetch.
+
+### Definition
+
+- **City feed "murder"** = `offincident` contains MURDER or equals HOMICIDE (City of Dallas Police Incidents, `qv6i-rri7`, June 2014 to now).
+
+### Squad slice
+
+The percent of murders in the three southern patrol divisions (Southeast, South Central, Southwest). The Week 10 map showed most WaPo cases in the southern half of the city, and this checks whether that holds in the city's own feed after 2017.
+
+### Reporting gap
+
+For the full years 2015-2024, the city's public feed shows about half (51.5%) of the murders Dallas reported to the FBI. See `reports/dallas_city_vs_fbi.csv`. This is documented, not "fixed" by scaling.

@@ -21,6 +21,7 @@ Pygments==2.21.0
 pyparsing==3.3.3
 pytest==9.1.1
 python-dateutil==3.0.0
+python-dotenv==1.2.4
 requests==2.34.2
 six==1.17.0
 tzdata==2026.5
