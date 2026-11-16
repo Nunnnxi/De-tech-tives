@@ -12,6 +12,36 @@ ITSS 3312 squad repo.
 
 Each week, add the new supplement `.md` files to `claudefiles/md/` and the new decks to `claudefiles/pptxs/`.
 
+## What the data says so far
+
+The project uses three sources on Dallas homicides. Each defines "solved" differently, and they don't all agree.
+
+| Source | Years | "Solved" means | Used for |
+|---|---|---|---|
+| FBI / Murder Accountability Project | 1965-2025 | arrest **or** exceptional clearance | `dallas_series.csv`, trend chart |
+| Washington Post | 2007-early 2017 | arrest only | case map, week 13 model |
+| City of Dallas live feed | June 2014-now | (no clearance used) | `case.db`, reporting-gap audit |
+
+**1. Dallas solves a smaller share of murders than it used to.** FBI clearance fell every decade:
+
+| Decade | Murders | Cleared |
+|---|---|---|
+| 1960s (from 1965) | 790 | 90% |
+| 1970s | 2,295 | 86% |
+| 1980s | 3,173 | 73% |
+| 1990s | 3,091 | 71% |
+| 2000s | 2,066 | 63% |
+| 2010s | 1,522 | 59% |
+| 2020s (to 2025) | 1,220 | 51% |
+
+Murders peaked in 1991 (500). 2018 is the record-low clearance year (39.9%), and 2017 is a suspicious jump to 79.6%. Reported minus cleared, summed since 1965, leaves about 4,127 cases (`dallas_unsolved_pile.csv`).
+
+**2. FBI and Washington Post counts agree.** For 2007-2016 the two case counts are within about 5 per year. WaPo's arrest rate is always lower than the FBI clearance rate, because WaPo counts arrests only. WaPo's 2017 is a partial year (45 cases).
+
+**3. Murders are concentrated in the south, but so are cases of every outcome.** On the WaPo map, 43% of 1,567 cases are open. The open share is fairly even across areas (40-47%), so the south has more unsolved cases mainly because it has more cases. The city feed agrees: 61.5% of its murders are in the Southeast, South Central and Southwest divisions.
+
+**4. The city's public feed shows about half the murders it reports to the FBI.** For the full years 2015-2024, the feed has 51.5% of the FBI count (2020: 102 vs 247). Since the FBI and WaPo agree, the feed is the odd one out. Candidate reasons: privacy filtering, cases reclassified from another offense later, and the feed being a research copy rather than the system of record. We tested one more, one row per incident instead of per victim. The feed has 1,168 rows but only 1,133 distinct case numbers, so it already has extra rows, and that reason does not explain the gap. See `reports/dallas_city_vs_fbi.csv`.
+
 ## Setup
 
 ```
