@@ -17,6 +17,10 @@ Every number in `reports/` is produced by a script in `src/`. No CSV here is han
    The portal calls it "published for research" and says rows are filtered for privacy; the DPD Crime Analytics Dashboard is the authoritative source.
    Used for: `dallas_city_vs_fbi.csv`.
 
+4. **FRED, Federal Reserve Bank of St. Louis**, series `LAUMT481910000000003A`: unemployment rate, Dallas-Fort Worth-Arlington metro area, annual, not seasonally adjusted. Original source: U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics. https://fred.stlouisfed.org/series/LAUMT481910000000003A, downloaded 2026-11-18 with a per-user API key.
+   Raw API response cached as `data/fred_dfw_unemployment.json`; yearly table `data/dfw_unemployment.csv` (1990-2025) built by `src/get_fred.py`.
+   Used for: `factor_merged.csv`, `factor_results.csv`, `factor_writeup.md`.
+
 ## Definitions (they are not the same)
 
 - **FBI / UCR "cleared"** (MAP file, `CLR` column): a clearance by arrest **or** by exceptional means. A clearance is counted in the year it happens, even for a murder from an earlier year, so a yearly rate can exceed 100%.
@@ -36,6 +40,9 @@ Every number in `reports/` is produced by a script in `src/`. No CSV here is han
 | `dallas_map.html` | `src/casemap.py` | Week 10 council map: one dot per WaPo Dallas case 2007-2017, orange = Open/No arrest, green = Closed (by arrest + without arrest). No popups/tooltips. |
 | `dallas_open_share_by_area.csv` | `src/casemap.py` | open-case share by 3x3 grid area, 2x2 quadrant, and the Forest Lane / Audelia corridor |
 | `dallas_map_age.html` | `src/casemap.py` | same dots colored by victim age bucket (stretch). Age is "Unknown" for every Dallas record in the WaPo file, so all dots are gray. |
+| `factor_merged.csv` | `src/factor.py` | Week 12: year, reported, cleared, clearance, unemployment, unemployment_lag1 (1990-2025), the exact data the models used |
+| `factor_results.csv` | `src/factor.py` | Week 12: coef, p_value, 95% CI, r_squared, n and years for the two pre-registered models |
+| `factor_writeup.md` | hand-written from `factor_results.csv` | Week 12 hypothesis, result, two confounders, verdict |
 | `dallas_city_vs_fbi.csv` | `src/queries.py` | Week 11 reporting gap: year, city_murders (city feed), fbi_reported (MRD), city_share_of_fbi, note. 2014-2025; 2014 city and 2025 FBI are partial. |
 | `dallas_map.png` | `src/map_screenshot.py` | headless-Chrome screenshot of `dallas_map.html` for the README (stretch) |
 
