@@ -19,7 +19,7 @@ Every number in `reports/` is produced by a script in `src/`. No CSV here is han
 
 4. **FRED, Federal Reserve Bank of St. Louis**, series `LAUMT481910000000003A`: unemployment rate, Dallas-Fort Worth-Arlington metro area, annual, not seasonally adjusted. Original source: U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics. https://fred.stlouisfed.org/series/LAUMT481910000000003A, downloaded 2026-11-18 with a per-user API key.
    Raw API response cached as `data/fred_dfw_unemployment.json`; yearly table `data/dfw_unemployment.csv` (1990-2025) built by `src/get_fred.py`.
-   Used for: `factor_merged.csv`, `factor_results.csv`, `factor_writeup.md`.
+   Used for: `factor_merged.csv`, `factor_results.csv`, `factor_side_checks.csv`, `factor_writeup.md`.
 
 ## Definitions (they are not the same)
 
@@ -42,6 +42,7 @@ Every number in `reports/` is produced by a script in `src/`. No CSV here is han
 | `dallas_map_age.html` | `src/casemap.py` | same dots colored by victim age bucket (stretch). Age is "Unknown" for every Dallas record in the WaPo file, so all dots are gray. |
 | `factor_merged.csv` | `src/factor.py` | Week 12: year, reported, cleared, clearance, unemployment, unemployment_lag1 (1990-2025), the exact data the models used |
 | `factor_results.csv` | `src/factor.py` | Week 12: coef, p_value, 95% CI, r_squared, n and years for the two pre-registered models |
+| `factor_side_checks.csv` | `src/factor.py` | Week 12 descriptive checks (not models): correlations, means by decade, high- vs low-unemployment years. Backs the writeup's confounders and side notes. |
 | `factor_writeup.md` | hand-written from `factor_results.csv` | Week 12 hypothesis, result, two confounders, verdict |
 | `dallas_city_vs_fbi.csv` | `src/queries.py` | Week 11 reporting gap: year, city_murders (city feed), fbi_reported (MRD), city_share_of_fbi, note. 2014-2025; 2014 city and 2025 FBI are partial. |
 | `dallas_map.png` | `src/map_screenshot.py` | headless-Chrome screenshot of `dallas_map.html` for the README (stretch) |

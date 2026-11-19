@@ -11,7 +11,7 @@ The reasoning: when unemployment rises, city revenue falls and the police budget
 - **Clearance:** `reports/dallas_series.csv` (FBI UCR via the Murder Accountability Project, Dallas Police Department, ORI `TXDPD00`). Clearance = cleared / reported, where "cleared" means arrest **or** exceptional clearance. Years used: 1990-2025.
 - **Factor:** unemployment rate, Dallas-Fort Worth-Arlington metro area, annual, not seasonally adjusted (BLS Local Area Unemployment Statistics), FRED series `LAUMT481910000000003A`, https://fred.stlouisfed.org/series/LAUMT481910000000003A, downloaded 2026-11-18 by `src/get_fred.py`. One row per year, 1990-2025.
 - **After merge:** 36 rows (1990-2025). The lag-1 model has 35 (1991-2025), because there is no 1989 rate in the series.
-- The merged dataset is in `reports/factor_merged.csv` and the numbers below are in `reports/factor_results.csv`, both written by `src/factor.py`.
+- The merged dataset is in `reports/factor_merged.csv`, the model numbers are in `reports/factor_results.csv`, and the descriptive numbers in the confounder and side-note sections are in `reports/factor_side_checks.csv`. All three are written by `src/factor.py`.
 - 2025 is a partial FBI year (still being reported). We kept it because the pre-registered design uses every overlapping year.
 
 ## Result
@@ -47,6 +47,35 @@ The lowest-clearance years (2018: 39.9%, 2022-2024: about 46-48%) happen to fall
 The number of murders each year changes how much time detectives can give each case, and it also moves with economic conditions and the crime waves behind them. Dallas averaged 309 murders a year in the 1990s versus 152 in the 2010s. If recessions shift how many murders happen or what kind they are, unemployment could look related to clearance only through caseload. In our data murders and unemployment are only weakly related (r = 0.13), so this channel is probably small here, but our design cannot rule it out.
 
 **Also worth noting:** 2017 (79.6%, unemployment 3.7%) and 2018 (39.9%, 3.6%) are the outliers flagged in Week 9. With only 36 points, two extreme years can pull the line on their own.
+
+## Side notes (found after the result, not pre-registered)
+
+These are things we checked **after** seeing that the slope was positive. They are descriptive (means and correlations), not extra regressions, and they do not change the verdict. They are recorded so we and reviewers can reuse them in Week 13 and the final briefing. Numbers: `reports/factor_side_checks.csv`.
+
+### 1. "Bad times mean fewer murders, so cases are easier to clear": tested, not supported
+
+**The idea:** when unemployment is high, maybe fewer murders happen (or fewer get added), so detectives have a lighter caseload and the clearance rate *looks* higher. That would explain the positive slope.
+
+**The test:** we split the 36 years at the median unemployment rate (4.85%) into 18 high and 18 low years.
+
+| | Mean murders per year | Mean clearance |
+|---|---|---|
+| High-unemployment years | 239 | 65.2% |
+| Low-unemployment years | 200 | 59.6% |
+
+High-unemployment years had **more** murders, not fewer, and still had higher clearance. Murders and unemployment barely move together (r = +0.13). The data does not support this explanation.
+
+**The "fewer cases looked at" version** points the wrong way. Clearance = cleared / reported. Investigating fewer cases would lower *cleared* and push the rate **down**. The rate could only be inflated if murders went unrecorded (a smaller *reported*), and murder is the crime least likely to go unrecorded.
+
+### 2. More murders went with *higher* clearance, which is the time trend showing through
+
+Across 1990-2025, years with more murders had higher clearance (r = +0.34). That sounds backwards until you look at when those years were: the early 1990s had both the most murders (about 309 a year) and high clearance (about 71%), while 2020-2025 averaged 203 murders and 51% clearance. Both numbers are riding the same decades-long change, which is confounder 1 again.
+
+### 3. Takeaway for Week 13 and beyond
+
+- If another squad says "recessions mean fewer murders, so it's easier to clear," point them to side note 1: our data shows the opposite.
+- The positive slope is best explained by the **shared time trend**, not by anything the economy does to policing.
+- A future model that controls for year (or uses year-to-year *changes* instead of levels) is the natural next test. Per our pre-registration we did not run it here.
 
 ## Verdict
 

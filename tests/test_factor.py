@@ -46,6 +46,15 @@ def test_lag_matches_previous_year():
             assert merged.loc[year, "unemployment_lag1"] == merged.loc[year - 1, "unemployment"]
 
 
+def test_side_checks_split_is_even():
+    """The high/low unemployment split covers every merged year, half each."""
+    checks = load_or_skip(Path("reports/factor_side_checks.csv"))
+    years = checks[checks["check"] == "years"].set_index("group")["value"]
+    merged = load_or_skip(MERGED_PATH)
+    assert years.sum() == len(merged)
+    assert years["high-unemployment years"] == years["low-unemployment years"]
+
+
 def test_exactly_two_preregistered_models():
     """Only the primary and lag-1 models, no extra specifications."""
     results = load_or_skip(RESULTS_PATH)

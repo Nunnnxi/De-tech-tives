@@ -15,6 +15,11 @@ What it does:
          reports/factor_merged.csv   the merged dataset the models used
          reports/factor_results.csv  coef, p-value, R-squared, n per model
        so every number quoted in reports/factor_writeup.md is in a file.
+    5. Side checks (descriptive only, NOT extra models): correlations, means
+       by decade, and high- vs low-unemployment years, written to
+         reports/factor_side_checks.csv
+       These back the confounder discussion and the alternative explanation
+       we tested after seeing the result ("fewer murders in bad times").
 
 Clearance uses the FBI definition (arrest OR exceptional clearance).
 Exactly two models, as pre-registered. Adding more until one "works" is
@@ -33,6 +38,7 @@ SERIES_PATH = Path("reports/dallas_series.csv")
 FACTOR_PATH = Path("data/dfw_unemployment.csv")
 MERGED_PATH = Path("reports/factor_merged.csv")
 RESULTS_PATH = Path("reports/factor_results.csv")
+SIDE_CHECKS_PATH = Path("reports/factor_side_checks.csv")
 
 # The two pre-registered models: name -> statsmodels formula.
 MODELS = {
@@ -91,6 +97,49 @@ def results_row(name, formula, model):
     }
 
 
+def side_checks(merged):
+    """Descriptive numbers behind the writeup's confounders and side notes.
+
+    Returns a long table: check, group, value, note. Nothing here is a model
+    or a p-value; these are means and correlations to explain the result.
+    """
+    rows = []
+
+    def add(check, group, value, note=""):
+        rows.append({"check": check, "group": group, "value": round(float(value), 4), "note": note})
+
+    # Confounder 1 (time trend) and 2 (murder volume): simple correlations.
+    add("correlation", "year vs clearance", merged["year"].corr(merged["clearance"]),
+        "clearance falls over time")
+    add("correlation", "year vs unemployment", merged["year"].corr(merged["unemployment"]),
+        "unemployment drifts slightly lower over time")
+    add("correlation", "unemployment vs reported", merged["unemployment"].corr(merged["reported"]),
+        "murders barely move with unemployment")
+    add("correlation", "reported vs clearance", merged["reported"].corr(merged["clearance"]),
+        "high-murder years had HIGHER clearance (the 1990s): the time trend again")
+
+    # Means by period, to show the trend in plain numbers.
+    periods = pd.cut(merged["year"], [1989, 1999, 2009, 2019, 2025],
+                     labels=["1990s", "2000s", "2010s", "2020-25"])
+    for label, grp in merged.groupby(periods, observed=True):
+        add("period mean clearance", label, grp["clearance"].mean())
+        add("period mean unemployment", label, grp["unemployment"].mean())
+        add("period mean murders", label, grp["reported"].mean())
+
+    # Alternative explanation tested after the result: did high-unemployment
+    # years have FEWER murders (lighter caseload -> higher clearance)?
+    median = merged["unemployment"].median()
+    add("unemployment median", "1990-2025", median, "split point for high vs low")
+    high = merged[merged["unemployment"] >= median]
+    low = merged[merged["unemployment"] < median]
+    for label, grp in (("high-unemployment years", high), ("low-unemployment years", low)):
+        add("years", label, len(grp))
+        add("mean murders", label, grp["reported"].mean())
+        add("mean clearance", label, grp["clearance"].mean())
+
+    return pd.DataFrame(rows)
+
+
 def main():
     """Merge, eyeball, fit both pre-registered models, and save the results."""
     for path, cmd in ((SERIES_PATH, "src.series"), (FACTOR_PATH, "src.get_fred")):
@@ -121,9 +170,14 @@ def main():
     print("\ncoef = change in clearance (0-1 scale) per 1 percentage point of "
           "unemployment; x100 for percentage points.")
 
+    checks = side_checks(merged)
+    heading("Side checks (descriptive only, not models)")
+    print(checks.to_string(index=False))
+
     merged.to_csv(MERGED_PATH, index=False)
     results.to_csv(RESULTS_PATH, index=False)
-    print(f"\nwrote {MERGED_PATH} ({len(merged)} rows) and {RESULTS_PATH}")
+    checks.to_csv(SIDE_CHECKS_PATH, index=False)
+    print(f"\nwrote {MERGED_PATH} ({len(merged)} rows), {RESULTS_PATH}, {SIDE_CHECKS_PATH}")
 
 
 if __name__ == "__main__":

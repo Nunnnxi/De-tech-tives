@@ -44,6 +44,8 @@ Murders peaked in 1991 (500). 2018 is the record-low clearance year (39.9%), and
 
 **5. The economy doesn't explain the decline (Week 12).** We pre-registered that higher Dallas-Fort Worth unemployment would go with lower clearance. Over 1990-2025 it didn't: the relationship is weak, slightly positive and not significant (coef = +0.020, p = 0.10, R² = 0.08, n = 36). The long downward trend in clearance is the likely confounder. See `reports/factor_writeup.md`.
 
+*Side note (tested after the result, not pre-registered):* the idea that bad times mean fewer murders, and so easier clearance, does not hold. High-unemployment years averaged **239** murders versus **200** in low-unemployment years, yet had higher clearance (65.2% vs 59.6%), because both move with the time trend. Details are in the writeup's "Side notes" section and `reports/factor_side_checks.csv`.
+
 ## Setup
 
 ```
@@ -147,7 +149,7 @@ Every detective uses their **own** keys. The code is shared; keys never are.
 
 ```
 .venv/bin/python -m src.get_fred   # FRED -> data/fred_dfw_unemployment.json (cache) -> data/dfw_unemployment.csv
-.venv/bin/python -m src.factor     # merge + two OLS models -> reports/factor_merged.csv, factor_results.csv
+.venv/bin/python -m src.factor     # merge + two OLS models -> reports/factor_merged.csv, factor_results.csv, factor_side_checks.csv
 .venv/bin/python -m pytest
 ```
 

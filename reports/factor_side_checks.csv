@@ -1,0 +1,24 @@
+check,group,value,note
+correlation,year vs clearance,-0.6455,clearance falls over time
+correlation,year vs unemployment,-0.1882,unemployment drifts slightly lower over time
+correlation,unemployment vs reported,0.1336,murders barely move with unemployment
+correlation,reported vs clearance,0.3434,high-murder years had HIGHER clearance (the 1990s): the time trend again
+period mean clearance,1990s,0.7073,
+period mean unemployment,1990s,4.9,
+period mean murders,1990s,309.1,
+period mean clearance,2000s,0.6389,
+period mean unemployment,2000s,5.44,
+period mean murders,2000s,206.6,
+period mean clearance,2010s,0.5939,
+period mean unemployment,2010s,5.24,
+period mean murders,2010s,152.2,
+period mean clearance,2020-25,0.5096,
+period mean unemployment,2020-25,4.5667,
+period mean murders,2020-25,203.3333,
+unemployment median,1990-2025,4.85,split point for high vs low
+years,high-unemployment years,18.0,
+mean murders,high-unemployment years,238.9444,
+mean clearance,high-unemployment years,0.652,
+years,low-unemployment years,18.0,
+mean murders,low-unemployment years,199.8889,
+mean clearance,low-unemployment years,0.5957,
