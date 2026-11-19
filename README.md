@@ -42,6 +42,10 @@ Murders peaked in 1991 (500). 2018 is the record-low clearance year (39.9%), and
 
 **4. The city's public feed shows about half the murders it reports to the FBI.** For the full years 2015-2024, the feed has 51.5% of the FBI count (2020: 102 vs 247). Since the FBI and WaPo agree, the feed is the odd one out. Candidate reasons: privacy filtering, cases reclassified from another offense later, and the feed being a research copy rather than the system of record. We tested one more, one row per incident instead of per victim. The feed has 1,168 rows but only 1,133 distinct case numbers, so it already has extra rows, and that reason does not explain the gap. See `reports/dallas_city_vs_fbi.csv`.
 
+**5. The economy doesn't explain the decline (Week 12).** We pre-registered that higher Dallas-Fort Worth unemployment would go with lower clearance. Over 1990-2025 it didn't: the relationship is weak, slightly positive and not significant (coef = +0.020, p = 0.10, R² = 0.08, n = 36). The long downward trend in clearance is the likely confounder. See `reports/factor_writeup.md`.
+
+*Side note (tested after the result, not pre-registered):* the idea that bad times mean fewer murders, and so easier clearance, does not hold. High-unemployment years averaged **239** murders versus **200** in low-unemployment years, yet had higher clearance (65.2% vs 59.6%), because both move with the time trend. Details are in the writeup's "Side notes" section and `reports/factor_side_checks.csv`.
+
 ## Setup
 
 ```
@@ -129,3 +133,40 @@ The percent of murders in the three southern patrol divisions (Southeast, South 
 ### Reporting gap
 
 For the full years 2015-2024, the city's public feed shows about half (51.5%) of the murders Dallas reported to the FBI. See `reports/dallas_city_vs_fbi.csv`. This is documented, not "fixed" by scaling.
+
+## Week 12: The Factor (unemployment)
+
+### Getting your keys (each detective, once)
+
+Every detective uses their **own** keys. The code is shared; keys never are.
+
+1. Copy `.env.example` to `.env` in the repo root (`.env` is gitignored).
+2. Dallas token: dallasopendata.com > My Profile > Edit Profile > Developer Settings > Create New App Token.
+3. FRED key: create an account at fredaccount.stlouisfed.org, then go to https://fredaccount.stlouisfed.org/apikeys > Request API Key.
+4. Paste each one after its `=` sign, with no quotes or spaces, and save.
+
+### Rebuild (after `src.series`)
+
+```
+.venv/bin/python -m src.get_fred   # FRED -> data/fred_dfw_unemployment.json (cache) -> data/dfw_unemployment.csv
+.venv/bin/python -m src.factor     # merge + two OLS models -> reports/factor_merged.csv, factor_results.csv, factor_side_checks.csv
+.venv/bin/python -m pytest
+```
+
+### Hypothesis (pre-registered)
+
+> The Dallas-Fort Worth unemployment rate is associated with Dallas homicide clearance, in the negative direction.
+
+### Models (exactly two, as pre-registered)
+
+| Model | coef | p | R² | n |
+|---|---|---|---|---|
+| `clearance ~ unemployment` | +0.0197 | 0.100 | 0.078 | 36 (1990-2025) |
+| `clearance ~ unemployment_lag1` | +0.0239 | 0.048 | 0.113 | 35 (1991-2025) |
+
+The hypothesis is not supported: both slopes are positive, the opposite of what we predicted. The confounders (the long downward trend in clearance, and murder volume) and the verdict are in `reports/factor_writeup.md`.
+
+### Definitions
+
+- **Clearance** = FBI "cleared" (arrest **or** exceptional) / reported, from `dallas_series.csv`.
+- **Unemployment** = annual unemployment rate (%) for the Dallas-Fort Worth-Arlington metro area, not seasonally adjusted (BLS LAUS via FRED, `LAUMT481910000000003A`).
